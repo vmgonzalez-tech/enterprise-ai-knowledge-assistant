@@ -1,7 +1,6 @@
+
 import streamlit as st
-import ollama
-import chromadb
-from pathlib import Path
+from assistant import initialise_database, ask_question
 
 st.set_page_config(
     page_title="Enterprise AI Knowledge Assistant",
@@ -22,15 +21,13 @@ with st.sidebar:
     st.divider()
     st.info("Enterprise AI Portfolio Project")
 
-@st.cache_resource
-def initialise_database():
-    client = chromadb.PersistentClient(path="./chroma_db")
-    collection = client.get_or_create_collection(
-        name="company_knowledge"
-    )
-    return collection
 
-collection = initialise_database()
+@st.cache_resource
+def load_database():
+    return initialise_database()
+
+
+collection = load_database()
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -52,38 +49,10 @@ if question:
 
     with st.chat_message("assistant"):
         with st.spinner("Searching company knowledge..."):
+            result = ask_question(question, collection)
+            answer = result["answer"]
+            documents = result["sources"]
 
-            results = collection.query(
-                query_texts=[question],
-                n_results=min(3, collection.count())
-            )
-
-            documents = results["documents"][0]
-            context = "\n\n".join(documents)
-
-            response = ollama.chat(
-                model="llama3.2:3b",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": (
-                            "You are an enterprise knowledge assistant. "
-                            "Answer only using the provided context. "
-                            "If the answer is not available, say you don't know. "
-                            "Never invent company policies."
-                        )
-                    },
-                    {
-                        "role": "user",
-                        "content": (
-                            f"Context:\n{context}\n\n"
-                            f"Question: {question}"
-                        )
-                    }
-                ]
-            )
-
-            answer = response["message"]["content"]
             st.markdown(answer)
 
             with st.expander("📄 View Sources"):

@@ -12,3 +12,4 @@ chroma_db/
 *.pfx
 .streamlit/credentials.toml
 audit-report.json
+/app/ui_backup.py

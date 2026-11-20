@@ -1,0 +1,41 @@
+[
+  {
+    "id": "annual_leave",
+    "question": "How many days of annual leave do full-time employees receive?",
+    "expected_facts": [
+      "25 days",
+      "UK bank holidays"
+    ],
+    "should_abstain": false
+  },
+  {
+    "id": "remote_work",
+    "question": "How many days per week can employees work remotely?",
+    "expected_facts": [
+      "3 days",
+      "manager approval"
+    ],
+    "should_abstain": false
+  },
+  {
+    "id": "expenses",
+    "question": "What is the approval requirement for expenses over GBP 500?",
+    "expected_facts": [
+      "GBP 500",
+      "manager approval"
+    ],
+    "should_abstain": false
+  },
+  {
+    "id": "unknown_sick_leave",
+    "question": "How many days of sick leave do employees receive?",
+    "expected_facts": [],
+    "should_abstain": true
+  },
+  {
+    "id": "unknown_salary",
+    "question": "What is the company's annual salary increase policy?",
+    "expected_facts": [],
+    "should_abstain": true
+  }
+]
